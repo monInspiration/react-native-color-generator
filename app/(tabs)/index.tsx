@@ -13,7 +13,7 @@ export default function Index() {
   const [colorTheme, setColorTheme] = useState<ColorTheme>(
     generateColorTheme()
   );
-  console.log(colorTheme);
+
   const updateColorTheme = () => {
     setColorTheme(generateColorTheme());
   };

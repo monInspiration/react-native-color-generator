@@ -23,14 +23,16 @@ export const generateColorTheme = (): ColorTheme => {
 };
 
 /*
-    * Function generates random hex code of the color.
+    * Function generates random color in rgb.
     ** Function explanation:
         1. Random number from 0 to 1 is generated 
         2. Number is converted to hexadecimal string
         3. Last 6 elements of the string are taken to generate hex code of the color
 */
 const generateRandomColor = (): ColorValue => {
-  return `#${Math.random().toString(16).slice(-6)}`;
+  return rgbChannelsToColor(
+    hexToRgbChannels(`#${Math.random().toString(16).slice(-6)}`)
+  );
 };
 
 /*
@@ -42,14 +44,14 @@ const generateTextColorFromBackgroundColor = (
   mode: "main" | "secondary"
 ): ColorValue => {
   if (isHexColor(color)) {
-    return hslChannelsToColor(
+    return hslToRgbColor(
       adaptHslColor(
         rgbToHslChannels(hexToRgbChannels(color)),
         mode == "main" ? "major" : "minor"
       )
     );
   } else if (isRgbColor(color)) {
-    return hslChannelsToColor(
+    return hslToRgbColor(
       adaptHslColor(
         rgbToHslChannels(rgbToRgbChannels(color)),
         mode == "main" ? "major" : "minor"
@@ -68,7 +70,9 @@ type RgbChannels = {
 /*
  * Convert hex color into rgb channels
  */
-const hexToRgbChannels = (color: string | ColorValue): RgbChannels => {
+export const hexToRgbChannels = (
+  color: string | ColorValue | undefined
+): RgbChannels => {
   let hexCode = color as string;
   let r = 0,
     g = 0,
@@ -115,7 +119,7 @@ const rgbToRgbChannels = (color: string | ColorValue): RgbChannels => {
 /*
  * Create rgb color string from channels
  */
-const rgbChannelsToColor = (rgbChannels: RgbChannels): ColorValue => {
+export const rgbChannelsToColor = (rgbChannels: RgbChannels): ColorValue => {
   return `rgb(${rgbChannels.r}, ${rgbChannels.g}, ${rgbChannels.b})`;
 };
 
@@ -173,6 +177,17 @@ const rgbToHslChannels = (rgbChannels: RgbChannels): HslChannels => {
  */
 const hslChannelsToColor = (hslChannels: HslChannels): ColorValue => {
   return `hsl(${hslChannels.h}, ${hslChannels.s}%, ${hslChannels.l}%)`;
+};
+
+const hslToRgbColor = (hslChannels: HslChannels) => {
+  let { h, s, l } = hslChannels;
+  s /= 100;
+  l /= 100;
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) =>
+    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return `rgb(${255 * f(0)}, ${255 * f(8)}, ${255 * f(4)})`;
 };
 
 /*
