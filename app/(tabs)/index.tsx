@@ -32,6 +32,7 @@ export default function Index() {
             : "dark-content"
         }
         animated
+        backgroundColor={"transparent"}
       />
       <ColorChangingContainer
         backgroundColor={colorTheme?.backgroundColor}
