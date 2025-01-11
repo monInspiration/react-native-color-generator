@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { StatusBar, View } from "react-native";
 import { useState } from "react";
 
 // Components
@@ -7,7 +7,7 @@ import Title from "@/components/Title";
 
 // Models
 import { ColorTheme } from "@/models/theme";
-import { generateColorTheme } from "@/utils/colorGenerator";
+import { generateColorTheme, isDarkColor } from "@/utils/colorGenerator";
 
 export default function Index() {
   const [colorTheme, setColorTheme] = useState<ColorTheme>(
@@ -24,6 +24,15 @@ export default function Index() {
         flex: 1,
       }}
     >
+      <StatusBar
+        translucent
+        barStyle={
+          isDarkColor(colorTheme.backgroundColor)
+            ? "light-content"
+            : "dark-content"
+        }
+        animated
+      />
       <ColorChangingContainer
         backgroundColor={colorTheme?.backgroundColor}
         onPress={updateColorTheme}

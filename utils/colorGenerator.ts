@@ -222,6 +222,21 @@ const adaptHslColor = (
 };
 
 /*
+ * Check is given color dark
+ */
+export const isDarkColor = (color: ColorValue | string): boolean => {
+  if (isHexColor(color)) {
+    let hslChannels = rgbToHslChannels(hexToRgbChannels(color));
+    if (hslChannels.l <= 40) return true;
+  } else if (isRgbColor(color)) {
+    let hslChannels = rgbToHslChannels(rgbToRgbChannels(color));
+    if (hslChannels.l < 40) return true;
+  }
+
+  return false;
+};
+
+/*
  * Generate random integer for selected range
  */
 const randomInteger = (min: number, max: number): number => {
